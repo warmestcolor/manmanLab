@@ -93,7 +93,7 @@ def export():
   print('Done!')
 
 def merge(imageArrs):
-  # 聪明的我肯定只用了求平均的算法来做 merge
+  # 聪明的我肯定只用了求平均的算法来做 merge，更多方法参考：https://docs.newvfx.com/docs/7132.html
   image = imageArrs[0]
   for i in range(1, len(imageArrs)):
     image = image + imageArrs[i]
