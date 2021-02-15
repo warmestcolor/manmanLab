@@ -87,10 +87,12 @@ def export():
         filepath_prefix = dir_path + '/' + export_prefix + timepoint_name + '-' + channel_name
         
         # save the 7 photos
-        for i in range(len(imageUInt8)):
-          export_file_path = filepath_prefix + '_' + str(i) + '.tiff'
-          # 從 NumPy 轉為 SimpleITK 影像
-          write_file(imageUInt8, voxelSize, export_file_path)
+        export_file_path = filepath_prefix + '.tiff'
+        write_file(imageUInt8, voxelSize, export_file_path)
+        # for i in range(len(imageUInt8)):
+        #   export_file_path = filepath_prefix + '_' + str(i) + '.tiff'
+        #   # 從 NumPy 轉為 SimpleITK 影像
+        #   write_file(imageUInt8[i], voxelSize, export_file_path)
 
         # save merged photo
         if export_merge:
