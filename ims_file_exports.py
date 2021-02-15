@@ -13,6 +13,7 @@ export_prefix = 'YMY128X134_F2-1-'      # 导出文件前缀
 export_dir = 'exports'                  # 导出文件夹
 export_channels = ['mCherry', 'BF', 'CFP', 'YFP']  # 需导出的通道
 export_merge = True                     # 是否导出 merge 图像
+export_resolution_level = 0             # 导出清晰度等级，向上覆盖原则，0 代表最清晰：[0: 0] [1: 0, 1] [2: 0, 1, 2] [3: 0, 1, 2, 3] [4: 0, 1, 2, 3, 4]
 
 def export():
 
@@ -53,6 +54,9 @@ def export():
   # start reading...
   resolution_level_keys = list(imsFile['DataSet'].keys())
   for resolution_level_key in resolution_level_keys:
+    resolution_level_index = int(resolution_level_key.split(' ')[1])
+    if resolution_level_index > export_resolution_level:
+      continue
     time_point_keys = list(imsFile['DataSet'][resolution_level_key])
     for time_point_key in time_point_keys:
       channel_keys = list(imsFile['DataSet'][resolution_level_key][time_point_key])
@@ -72,8 +76,8 @@ def export():
         imageUInt8 = to_255(image)
 
         # save file
-        resolution_name = resolution_level_key.split(' ')[1]
-        dir_path = export_dir + '/resolution_' + resolution_name
+        # resolution_name = resolution_level_key.split(' ')[1]
+        dir_path = export_dir + '/resolution_' + str(resolution_level_index)
         if not os.path.exists(dir_path):
           os.mkdir(dir_path)
 
