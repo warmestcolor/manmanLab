@@ -11,6 +11,8 @@ import SimpleITK as sitk
 file_path = 'ims/YMY128X134_F2-1-T.ims' # 原文件路径
 export_prefix = 'YMY128X134_F2-1-'      # 导出文件前缀
 export_dir = 'exports'                  # 导出文件夹
+export_channels = ['mCherry', 'BF', 'CFP', 'YFP']  # 需导出的通道
+export_merge = True                     # 是否导出 merge 图像
 
 def export():
 
@@ -55,6 +57,9 @@ def export():
     for time_point_key in time_point_keys:
       channel_keys = list(imsFile['DataSet'][resolution_level_key][time_point_key])
       for channel_key in channel_keys:
+        channel_name = ['mCherry', 'BF', 'CFP', 'YFP'][int(channel_key.split(' ')[1])]
+        if channel_name not in export_channels:
+          continue
         channel = imsFile['DataSet'][resolution_level_key][time_point_key][channel_key] # ['Data', 'Histogram', 'Histogram1024']
         # print('processing...', channel)
         rawdata = channel['Data']
@@ -74,19 +79,20 @@ def export():
 
         # as: YMY128X134_F2-1-T9-YFP
         timepoint_name = 'T' + str(int(time_point_key.split(' ')[1]) + 1)
-        channel_name = ['mCherry', 'BF', 'CFP', 'YFP'][int(channel_key.split(' ')[1])]
+        # channel_name = ['mCherry', 'BF', 'CFP', 'YFP'][int(channel_key.split(' ')[1])]
         filepath_prefix = dir_path + '/' + export_prefix + timepoint_name + '-' + channel_name
         
         # save the 7 photos
-        # for i in range(len(imageUInt8)):
-        #   export_file_path = filepath_prefix + '_' + str(i) + '.tiff'
-        #   # 從 NumPy 轉為 SimpleITK 影像
-        #   write_file(imageUInt8, voxelSize, export_file_path)
+        for i in range(len(imageUInt8)):
+          export_file_path = filepath_prefix + '_' + str(i) + '.tiff'
+          # 從 NumPy 轉為 SimpleITK 影像
+          write_file(imageUInt8, voxelSize, export_file_path)
 
         # save merged photo
-        mergedImageUInt8 = to_255(merge(image))
-        export_merged_file_path = filepath_prefix + '_Merge.tiff'
-        write_file(mergedImageUInt8, voxelSize, export_merged_file_path)
+        if export_merge:
+          mergedImageUInt8 = to_255(merge(image))
+          export_merged_file_path = filepath_prefix + '_Merge.tiff'
+          write_file(mergedImageUInt8, voxelSize, export_merged_file_path)
 
         print('file export success: ', filepath_prefix)
 
